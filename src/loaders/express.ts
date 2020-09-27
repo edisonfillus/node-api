@@ -1,4 +1,4 @@
-import {Application,Request, Response} from 'express';
+import {Application, NextFunction, Request, Response} from 'express';
 import {routes} from '../controllers';
 import {config} from "../config";
 import bodyParser from "body-parser";
@@ -23,7 +23,7 @@ export const expressLoader = (app: Application) => {
     app.use(config.api.prefix, routes());
 
     // Error handler
-    app.use((error: HttpException, req: Request, res: Response) => {
+    app.use((error: HttpException, req: Request, res: Response, next: NextFunction) => {
         const status = error.status || 500;
         const message = error.message || 'Something went wrong';
         res.status(status).send({status, message});

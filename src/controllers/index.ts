@@ -1,8 +1,8 @@
 import {Router} from 'express'
-import {atendimentos} from "./routes/atendimentos";
+import {atendimentosController} from "./routes/atendimentos.controller";
 
 export const routes = () => {
     const app = Router();
-    atendimentos(app);
+    atendimentosController(app);
     return app
 }
