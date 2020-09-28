@@ -1,7 +1,5 @@
 import {Router, Request, Response} from "express";
 
-const route = Router();
-
 const memoryDatabase = [
     {
         id: 1,
@@ -13,39 +11,46 @@ const memoryDatabase = [
     }
 ]
 
-export const atendimentosController = (app: Router) => {
-    app.use("/atendimentos", route);
+export const atendimentosController = () => {
 
-    route.post("/", (req, res) => {
+    const router = Router();
+
+    router.post("/atendimentos/", (req, res) => {
         const newAtendimento = req.body;
         memoryDatabase.push(newAtendimento);
-        res.status(201).send(req.body);
+        return res.status(201).send(req.body);
     });
 
-    route.get("/", (req: Request, res: Response) => {
-        res.status(200).send(memoryDatabase);
+    router.get("/atendimentos/", (req: Request, res: Response) => {
+        return res.status(200).send(memoryDatabase);
     });
 
-    route.get("/:id", (req, res) => {
+    router.get("/atendimentos/:id", (req, res) => {
         const id = parseInt(req.params.id);
         const result = memoryDatabase.find(elem=>elem.id === id);
         if(result){
-            res.status(200).send(result);
+            return res.status(200).send(result);
         } else {
-            res.status(404).send();
+            return res.status(404).send();
         }
     });
 
-    route.patch("/:id",(req,res)=>{
+    router.patch("/atendimentos/:id",(req,res)=>{
         const id = parseInt(req.params.id);
+        const changes = req.body;
+
+        const allowedFields = ["date"];
+        const invalidFields = Object.keys(changes).filter(field=>!allowedFields.includes(field));
+        if(invalidFields.length > 0){
+            return res.status(400).send({error:"Invalid fields"});
+        }
         const element = memoryDatabase.find(elem=>elem.id === id);
         if(!element) res.status(404).send();
-        const changes = req.body;
         Object.assign(element,changes);
-        res.status(200).send(element);
+        return res.status(200).send(element);
     })
 
-    route.put("/:id",(req,res)=>{
+    router.put("/atendimentos/:id",(req,res)=>{
         const id = parseInt(req.params.id);
         const toUpdate = req.body;
         const index = memoryDatabase.findIndex(elem=>elem.id === id);
@@ -57,13 +62,15 @@ export const atendimentosController = (app: Router) => {
         res.status(200).send();
     })
 
-    route.delete("/:id",(req,res)=>{
+    router.delete("/atendimentos/:id",(req,res)=>{
         const id = parseInt(req.params.id);
         const index = memoryDatabase.findIndex(elem=>elem.id === id);
         if(index === -1) res.status(404).send();
         memoryDatabase.splice(index,1);
         res.status(204).send();
     })
+
+    return router;
 
 }
 
