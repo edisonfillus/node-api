@@ -1,31 +1,30 @@
 import {Router, Request, Response} from "express";
+import {config} from "../config";
 
-const memoryDatabase = [
-    {
-        id: 1,
-        date: '2020-10-10 10:30:22.223'
-    },
-    {
-        id: 2,
-        date: '2020-10-10 10:30:25.125'
-    }
-]
+export const BASE_PATH = config.api.prefix + "/atendimentos";
+
+export interface Atendimento{
+    id: number,
+    date: string
+}
+
+const memoryDatabase: Atendimento[] = []
 
 export const atendimentosController = () => {
 
     const router = Router();
 
-    router.post("/atendimentos/", (req, res) => {
+    router.post(`${BASE_PATH}`, (req, res) => {
         const newAtendimento = req.body;
         memoryDatabase.push(newAtendimento);
         return res.status(201).send(req.body);
     });
 
-    router.get("/atendimentos/", (req: Request, res: Response) => {
+    router.get(`${BASE_PATH}`, (req: Request, res: Response) => {
         return res.status(200).send(memoryDatabase);
     });
 
-    router.get("/atendimentos/:id", (req, res) => {
+    router.get(`${BASE_PATH}/:id`, (req, res) => {
         const id = parseInt(req.params.id);
         const result = memoryDatabase.find(elem=>elem.id === id);
         if(result){
@@ -35,7 +34,7 @@ export const atendimentosController = () => {
         }
     });
 
-    router.patch("/atendimentos/:id",(req,res)=>{
+    router.patch(`${BASE_PATH}/:id`,(req, res)=>{
         const id = parseInt(req.params.id);
         const changes = req.body;
 
@@ -50,7 +49,7 @@ export const atendimentosController = () => {
         return res.status(200).send(element);
     })
 
-    router.put("/atendimentos/:id",(req,res)=>{
+    router.put(`${BASE_PATH}/:id`,(req, res)=>{
         const id = parseInt(req.params.id);
         const toUpdate = req.body;
         const index = memoryDatabase.findIndex(elem=>elem.id === id);
@@ -62,7 +61,7 @@ export const atendimentosController = () => {
         res.status(200).send();
     })
 
-    router.delete("/atendimentos/:id",(req,res)=>{
+    router.delete(`${BASE_PATH}/:id` ,(req, res)=>{
         const id = parseInt(req.params.id);
         const index = memoryDatabase.findIndex(elem=>elem.id === id);
         if(index === -1) res.status(404).send();

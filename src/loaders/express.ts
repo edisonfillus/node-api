@@ -20,7 +20,7 @@ export const expressLoader = (app: Application) => {
     app.use(bodyParser.json());
 
     // Configure the API path and include all the routes
-    app.use(config.api.prefix, routes());
+    app.use(routes());
 
     // Error handler
     app.use((error: HttpException, req: Request, res: Response, next: NextFunction) => {
